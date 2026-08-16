@@ -1,0 +1,43 @@
+AWX:
+  enabled: true
+
+  name: awx
+
+  spec:
+    service_type: ClusterIP
+  
+    projects_persistence: true
+    projects_storage_class: longhorn
+    projects_storage_size: 5Gi
+  
+    postgres_storage_class: longhorn
+    postgres_storage_requirements:
+      requests:
+        storage: 8Gi
+
+    web_replicas: 1
+    task_replicas: 1
+
+    web_resource_requirements:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1536Mi
+
+    task_resource_requirements:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 2Gi
+
+    ee_resource_requirements:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
