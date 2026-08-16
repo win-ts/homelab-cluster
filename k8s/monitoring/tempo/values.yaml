@@ -1,0 +1,28 @@
+replicas: 1
+
+tempo:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
+
+  retention: 168h
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+persistence:
+  enabled: true
+  storageClassName: longhorn
+  size: 8Gi
+
+service:
+  type: ClusterIP

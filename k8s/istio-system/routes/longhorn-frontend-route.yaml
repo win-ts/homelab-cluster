@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: longhorn-frontend
+  namespace: longhorn-system
+spec:
+  parentRefs:
+    - name: ingress-gateway
+      namespace: istio-system
+  hostnames:
+    - longhorn-frontend.k8s-ingress-gw.win-ts.int
+  rules:
+    - backendRefs:
+        - name: longhorn-frontend
+          port: 80
