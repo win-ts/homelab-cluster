@@ -82,3 +82,27 @@ lokiCanary:
 
 test:
   enabled: false
+
+chunksCache:
+  enabled: true
+  allocatedMemory: 256
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 320Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
+
+resultsCache:
+  enabled: true
+  allocatedMemory: 128
+
+  resources:
+    requests:
+      cpu: 25m
+      memory: 192Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
