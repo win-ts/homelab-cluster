@@ -1,0 +1,20 @@
+---
+- name: Configure MySQL server
+  hosts: mysql
+  become: true
+
+  vars_files:
+    - ../group_vars/all.yml
+
+  pre_tasks:
+    - name: Validate required MySQL secrets
+      ansible.builtin.assert:
+        that:
+          - mysql_root_password | default('') | string | length > 0
+          - mysql_app_password | default('') | string | length > 0
+        fail_msg: >-
+          Set mysql_root_password and mysql_app_password using an AWX survey,
+          credential, or encrypted variables.
+  roles:
+    - role: ../roles/docker
+    - role: ../roles/mysql

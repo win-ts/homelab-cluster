@@ -1,0 +1,22 @@
+---
+- name: Configure MinIO server
+  hosts: minio
+  become: true
+
+  vars_files:
+    - ../group_vars/all.yml
+
+  pre_tasks:
+    - name: Validate required MinIO credentials
+      ansible.builtin.assert:
+        that:
+          - minio_root_user | default('') | string | length >= 3
+          - minio_root_password | default('') | string | length >= 8
+        fail_msg: >-
+          Set minio_root_user and minio_root_password using an AWX survey,
+          credential, or encrypted variables. The password must contain at
+          least eight characters.
+
+  roles:
+    - role: ../roles/docker
+    - role: ../roles/minio

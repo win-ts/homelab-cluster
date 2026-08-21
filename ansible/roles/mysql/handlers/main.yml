@@ -1,0 +1,5 @@
+---
+- name: Restart MySQL
+  community.docker.docker_compose_v2:
+    project_src: "{{ mysql_compose_dir }}"
+    state: restarted

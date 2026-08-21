@@ -1,0 +1,10 @@
+---
+- name: Configure Vault server
+  hosts: vault
+  become: true
+
+  vars_files:
+    - ../group_vars/all.yml
+
+  roles:
+    - role: ../roles/vault

@@ -1,0 +1,40 @@
+---
+- name: Verify the data disk is mounted for Redis
+  ansible.builtin.command:
+    argv:
+      - mountpoint
+      - --quiet
+      - "{{ data_mount_path }}"
+  changed_when: false
+
+- name: Create Redis data directory
+  ansible.builtin.file:
+    path: "{{ redis_data_dir }}"
+    state: directory
+    owner: "999"
+    group: "999"
+    mode: "0750"
+
+- name: Create Redis Compose directory
+  ansible.builtin.file:
+    path: "{{ redis_compose_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Render Redis Compose file
+  ansible.builtin.template:
+    src: compose.yml.j2
+    dest: "{{ redis_compose_dir }}/compose.yml"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  notify: Restart Redis
+
+- name: Start Redis
+  community.docker.docker_compose_v2:
+    project_src: "{{ redis_compose_dir }}"
+    state: present
+    remove_orphans: true

@@ -1,0 +1,40 @@
+---
+- name: Verify the data disk is mounted for MySQL
+  ansible.builtin.command:
+    argv:
+      - mountpoint
+      - --quiet
+      - "{{ data_mount_path }}"
+  changed_when: false
+
+- name: Create MySQL data directory
+  ansible.builtin.file:
+    path: "{{ mysql_data_dir }}"
+    state: directory
+    owner: "999"
+    group: "999"
+    mode: "0750"
+
+- name: Create MySQL Compose directory
+  ansible.builtin.file:
+    path: "{{ mysql_compose_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Render MySQL Compose file
+  ansible.builtin.template:
+    src: compose.yml.j2
+    dest: "{{ mysql_compose_dir }}/compose.yml"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  notify: Restart MySQL
+
+- name: Start MySQL
+  community.docker.docker_compose_v2:
+    project_src: "{{ mysql_compose_dir }}"
+    state: present
+    remove_orphans: true

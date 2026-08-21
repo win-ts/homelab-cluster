@@ -1,0 +1,40 @@
+---
+- name: Verify the data disk is mounted for MinIO
+  ansible.builtin.command:
+    argv:
+      - mountpoint
+      - --quiet
+      - "{{ data_mount_path }}"
+  changed_when: false
+
+- name: Create MinIO data directory
+  ansible.builtin.file:
+    path: "{{ minio_data_dir }}"
+    state: directory
+    owner: "{{ minio_uid }}"
+    group: "{{ minio_gid }}"
+    mode: "0750"
+
+- name: Create MinIO Compose directory
+  ansible.builtin.file:
+    path: "{{ minio_compose_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Render MinIO Compose file
+  ansible.builtin.template:
+    src: compose.yml.j2
+    dest: "{{ minio_compose_dir }}/compose.yml"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  notify: Restart MinIO
+
+- name: Start MinIO
+  community.docker.docker_compose_v2:
+    project_src: "{{ minio_compose_dir }}"
+    state: present
+    remove_orphans: true

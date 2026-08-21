@@ -1,0 +1,19 @@
+---
+- name: Configure Redis server
+  hosts: redis
+  become: true
+
+  vars_files:
+    - ../group_vars/all.yml
+
+  pre_tasks:
+    - name: Validate required Redis secret
+      ansible.builtin.assert:
+        that:
+          - redis_password | default('') | string | length > 0
+        fail_msg: >-
+          Set redis_password using an AWX survey, credential, or encrypted
+          variables.
+  roles:
+    - role: ../roles/docker
+    - role: ../roles/redis

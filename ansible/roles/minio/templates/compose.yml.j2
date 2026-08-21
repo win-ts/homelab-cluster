@@ -1,0 +1,33 @@
+---
+services:
+  minio:
+    image: {{ minio_image | to_json }}
+    container_name: minio
+    restart: unless-stopped
+
+    environment:
+      MINIO_ROOT_USER: {{ minio_root_user | replace('$', '$$') | to_json }}
+      MINIO_ROOT_PASSWORD: {{ minio_root_password | replace('$', '$$') | to_json }}
+
+    command:
+      - server
+      - /data
+      - --console-address
+      - ":9001"
+
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+    volumes:
+      - {{ (minio_data_dir ~ ':/data') | to_json }}
+
+    healthcheck:
+      test:
+        - CMD
+        - mc
+        - ready
+        - local
+      interval: 10s
+      timeout: 5s
+      retries: 5

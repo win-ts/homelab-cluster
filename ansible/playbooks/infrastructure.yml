@@ -1,0 +1,5 @@
+---
+- import_playbook: mysql.yml
+- import_playbook: redis.yml
+- import_playbook: minio.yml
+- import_playbook: vault.yml

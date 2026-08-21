@@ -1,0 +1,26 @@
+---
+# Non-secret defaults. Supply passwords through AWX credentials, a survey, or
+# Ansible Vault; never commit them to this file.
+data_mount_path: /data
+
+mysql_database: app
+mysql_user: appuser
+mysql_image: mysql:8.4
+mysql_data_dir: /data/mysql
+mysql_compose_dir: /opt/mysql
+
+redis_image: redis:8
+redis_data_dir: /data/redis
+redis_compose_dir: /opt/redis
+
+minio_image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+minio_data_dir: /data/minio
+minio_compose_dir: /opt/minio
+minio_uid: "1000"
+minio_gid: "1000"
+
+vault_data_dir: /opt/vault/data
+vault_config_dir: /etc/vault.d
+vault_cluster_name: homelab-vault
+vault_listener_address: 0.0.0.0:8200
+vault_tls_disable: true
