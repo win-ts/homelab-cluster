@@ -5,6 +5,10 @@ AWX:
 
   spec:
     service_type: ClusterIP
+
+    ee_extra_env: |
+      - name: RECEPTOR_KUBE_SUPPORT_RECONNECT
+        value: enabled
   
     projects_persistence: true
     projects_storage_class: longhorn

@@ -1,0 +1,18 @@
+---
+- name: Test AWX job event streaming
+  hosts: vm-misc-1
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: Confirm connection before quiet period
+      ansible.builtin.ping:
+
+    - name: Remain quiet long enough to test runner keep-alive
+      ansible.builtin.wait_for:
+        timeout: 45
+      changed_when: false
+
+    - name: Confirm event stream after quiet period
+      ansible.builtin.debug:
+        msg: AWX worker stream test completed successfully
