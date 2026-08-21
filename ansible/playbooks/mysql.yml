@@ -11,10 +11,9 @@
       ansible.builtin.assert:
         that:
           - mysql_root_password | default('') | string | length > 0
-          - mysql_app_password | default('') | string | length > 0
         fail_msg: >-
-          Set mysql_root_password and mysql_app_password using an AWX survey,
-          credential, or encrypted variables.
+          Set mysql_root_password using an AWX survey, credential, or encrypted
+          variables.
   roles:
     - role: ../roles/docker
     - role: ../roles/mysql

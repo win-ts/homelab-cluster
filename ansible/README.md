@@ -33,7 +33,6 @@ Provide these as secret AWX survey fields, injected credential variables, or
 encrypted Ansible variables:
 
 - `mysql_root_password`
-- `mysql_app_password`
 - `redis_password`
 - `minio_root_user`
 - `minio_root_password` (at least eight characters)

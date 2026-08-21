@@ -7,9 +7,6 @@ services:
 
     environment:
       MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
-      MYSQL_DATABASE: "{{ mysql_database }}"
-      MYSQL_USER: "{{ mysql_user }}"
-      MYSQL_PASSWORD: "{{ mysql_app_password }}"
 
     ports:
       - "3306:3306"

@@ -3,8 +3,6 @@
 # Ansible Vault; never commit them to this file.
 data_mount_path: /data
 
-mysql_database: app
-mysql_user: appuser
 mysql_image: mysql:8.4
 mysql_data_dir: /data/mysql
 mysql_compose_dir: /opt/mysql
