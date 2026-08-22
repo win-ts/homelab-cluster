@@ -1,9 +1,9 @@
 # External Secrets Operator with Vault
 
 This setup lets External Secrets Operator (ESO) authenticate to Vault with a
-short-lived Kubernetes service-account token. Argo CD applies the declarative
-resources; ESO reads Vault and creates the `inari-backend` Kubernetes
-Secret in the `inari` namespace.
+Kubernetes service-account token. Argo CD applies the shared authentication
+resources and `SecretStore`; each application repository owns its
+`ExternalSecret` and resulting Kubernetes Secret.
 
 ## 1. Configure Vault
 
@@ -20,12 +20,6 @@ kubectl config view --raw --minify \
 
 vault auth list -format=json | jq -e '."kubernetes/"' >/dev/null || \
   vault auth enable kubernetes
-
-vault write auth/kubernetes/config \
-  kubernetes_host=https://k8s.win-ts.int:6443 \
-  kubernetes_ca_cert=@/tmp/win-ts-k8s-ca.crt \
-  disable_local_ca_jwt=true \
-  disable_iss_validation=true
 
 vault policy write inari-eso-read \
   k8s/external-secrets/vault/inari-eso-read.hcl
@@ -79,6 +73,34 @@ kubectl -n argocd wait application/external-secrets \
 
 kubectl apply -f k8s/argocd/applications/inari-external-secrets.yaml
 ```
+
+After Argo CD creates the reviewer resources, configure Vault with the token
+that Kubernetes generated. Run this on the machine where both `kubectl` and
+`vault` are configured:
+
+```bash
+kubectl -n inari get serviceaccount vault-token-reviewer
+kubectl -n inari get secret vault-token-reviewer-token
+kubectl get clusterrolebinding vault-token-reviewer
+
+REVIEWER_JWT=$(kubectl -n inari get secret \
+  vault-token-reviewer-token \
+  -o jsonpath='{.data.token}' | base64 --decode)
+
+vault write auth/kubernetes/config \
+  kubernetes_host=https://k8s.win-ts.int:6443 \
+  kubernetes_ca_cert=@/tmp/win-ts-k8s-ca.crt \
+  token_reviewer_jwt="$REVIEWER_JWT" \
+  disable_local_ca_jwt=true \
+  disable_iss_validation=true
+
+unset REVIEWER_JWT
+
+vault read auth/kubernetes/config | grep token_reviewer_jwt_set
+```
+
+The expected value is `true`. The token itself is stored in Vault and must
+never be committed to Git.
 
 Upgrade the existing Argo CD release with `k8s/argocd/values.yaml` as you
 normally do. That values file now includes an `ExternalSecret` health check, so
