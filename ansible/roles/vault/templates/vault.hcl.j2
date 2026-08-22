@@ -1,6 +1,7 @@
 ui = true
 
 cluster_name = "{{ vault_cluster_name }}"
+disable_mlock = {{ 'true' if vault_disable_mlock else 'false' }}
 
 storage "raft" {
   path    = "{{ vault_data_dir }}"
