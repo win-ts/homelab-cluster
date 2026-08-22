@@ -22,3 +22,5 @@ vault_config_dir: /etc/vault.d
 vault_cluster_name: homelab-vault
 vault_listener_address: 0.0.0.0:8200
 vault_tls_disable: true
+vault_api_address: vault.win-ts.int
+vault_cluster_address: vault.win-ts.int
